@@ -1,0 +1,100 @@
+name: Windows Auto Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-release-update-json:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Build Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller pyside6 pyqtgraph pyopengl numpy
+
+      - name: Resolve Version and Script
+        shell: pwsh
+        run: |
+          if ("${{ github.ref }}" -notmatch "^refs/tags/v(\d+\.\d+\.\d+)$") {
+            throw "This workflow expects a tag like v0.6.01"
+          }
+          $ver = $matches[1]
+          $script = "fa50_${ver}.py"
+          if (-not (Test-Path $script)) {
+            throw "Missing script file: $script"
+          }
+          "VERSION=$ver" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "SCRIPT=$script" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "TAG=v$ver" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Build EXE (onefile)
+        shell: pwsh
+        run: |
+          pyinstaller --noconfirm --clean --onefile --windowed `
+            --name FA50 `
+            --distpath .\dist `
+            --workpath .\build\pyi_ci `
+            --specpath . `
+            --add-data "fa50_psdb_0p1_strict2_v0.npz;." `
+            --add-data "FA50_GUIDEBOOK.md;." `
+            --add-data "1.jpg;." `
+            "$env:SCRIPT"
+
+      - name: Compute SHA256
+        shell: pwsh
+        run: |
+          $sha = (Get-FileHash .\dist\FA50.exe -Algorithm SHA256).Hash.ToUpper()
+          "SHA256=$sha" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          Write-Host "SHA256=$sha"
+
+      - name: Create/Update GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG }}
+          files: |
+            dist/FA50.exe
+          generate_release_notes: true
+
+      - name: Update main/version.json
+        shell: pwsh
+        env:
+          GH_REPO: ${{ github.repository }}
+        run: |
+          $utc = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+          $json = [ordered]@{
+            latest_version = "$env:VERSION"
+            published_at   = "$utc"
+            asset_name     = "FA50.exe"
+            download_url   = "https://github.com/$env:GH_REPO/releases/download/$env:TAG/FA50.exe"
+            sha256         = "$env:SHA256"
+          } | ConvertTo-Json -Depth 3
+
+          git fetch origin main
+          git checkout main
+          $json | Out-File -FilePath .\version.json -Encoding utf8
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add version.json
+          if (-not (git diff --cached --quiet)) {
+            git commit -m "chore(release): update version.json for $env:TAG"
+            git push origin main
+          } else {
+            Write-Host "version.json unchanged."
+          }
