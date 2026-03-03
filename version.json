@@ -1,7 +1,7 @@
 {
-  "latest_version": "0.6.03",
-  "published_at": "2026-03-03T05:03:40Z",
+  "latest_version": "0.6.6",
+  "published_at": "2026-03-03T05:32:50Z",
   "asset_name": "FA50.exe",
-  "download_url": "https://github.com/littlezzang7-ctrl/fa50-updater/releases/download/v0.6.03/FA50.exe",
-  "sha256": "21ADE13C165945508502621A29509044BA89DC5D4B968EA49BC71C8E26D9461C"
+  "download_url": "https://github.com/littlezzang7-ctrl/fa50-updater/releases/download/v0.6.6/FA50.exe",
+  "sha256": "3F65DBDE89A7166DE3AAD84465E621ACCB7D40DE2AB977C9511327DD99EDED7D"
 }
