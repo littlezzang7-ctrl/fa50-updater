@@ -60,6 +60,7 @@ This file defines mandatory working rules for Codex in this workspace.
 - Do not manually pick the next version for release when `release_auto.cmd` is available.
 - `release_auto.cmd` must determine the latest `fa50_X.Y.Z.py` and increment only patch by `+0.0.01`.
 - The script must sync `APP_VERSION`, append update-note lines to `CHANGELOG_FA50.md`, commit, push `main`, create tag `vX.Y.Z`, and push the tag.
+- If tags/releases are deleted or adjusted manually, run `sync_version_json_from_tags.cmd` to re-align `main/version.json` to the latest padded tag (`vX.Y.ZZ`).
 - Keep required runtime assets tracked in repo for CI build:
   - `fa50_psdb_0p1_strict2_v0.npz`
   - `FA50_GUIDEBOOK.md`
