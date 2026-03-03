@@ -1,6 +1,8 @@
 ﻿# CHANGELOG_FA50.md
 
 ## Update Notes
+- v0.6.03 | 2026-03-03 13:57 KST | Prepared CI release-fix version (`fa50_0.6.03.py`) to resolve GitHub Actions packaging failure by including required runtime assets in repository release commit.
+- v0.6.03 | 2026-03-03 13:57 KST | GitHub Actions 패키징 실패 해결을 위해 필수 런타임 자산을 릴리즈 커밋에 포함하도록 `fa50_0.6.03.py` 기반 수정 버전을 준비.
 - v0.6.02 | 2026-03-03 13:37 KST | Created new version file `fa50_0.6.02.py` from `0.6.01` and bumped internal `APP_VERSION` to `0.6.02` for next release cycle.
 - v0.6.02 | 2026-03-03 13:37 KST | `fa50_0.6.01.py` 기반으로 `fa50_0.6.02.py` 새 버전 파일을 생성하고 내부 `APP_VERSION`을 `0.6.02`로 상향.
 - v0.6.01 | 2026-03-03 13:31 KST | Version bump for release packaging and update-chain test (`0.6.00 -> 0.6.01`); no behavior logic change.
