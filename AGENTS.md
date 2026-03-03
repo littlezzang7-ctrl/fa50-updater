@@ -8,6 +8,7 @@ This file defines mandatory working rules for Codex in this workspace.
 - Never overwrite the latest versioned file.
 - Use the latest existing version file as the source for the next version.
 - If version order is missing/duplicated, stop and fix version continuity first.
+- Patch version must be zero-padded to 2 digits (example: `0.6.05`, `0.6.06`, not `0.6.6`).
 
 ## 2) Update Log (Single Source, Mandatory)
 - Maintain one append-only log file for all updates: `CHANGELOG_FA50.md`.
